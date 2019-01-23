@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 func check(e error) {
@@ -13,10 +14,19 @@ func check(e error) {
 }
 
 func main() {
-	keyBytes, err := ioutil.ReadFile("x509.key")
+
+	if len(os.Args) < 3 {
+		err := fmt.Errorf("usage: %s [keyfile_name] [certfile_name]", os.Args[0])
+		check(err)
+	}
+
+	x509keyFile := os.Args[1]
+	x509certFile := os.Args[2]
+
+	keyBytes, err := ioutil.ReadFile(x509keyFile)
 	check(err)
 
-	certBytes, err := ioutil.ReadFile("x509.cert")
+	certBytes, err := ioutil.ReadFile(x509certFile)
 	check(err)
 
 	cert, err := tls.X509KeyPair(certBytes, keyBytes)
